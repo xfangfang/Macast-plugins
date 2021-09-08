@@ -2,13 +2,14 @@
 #
 # Using potplayer as DLNA media renderer
 #
-
+# Macast Metadata
 # <macast.title>PotPlayer</macast.title>
 # <macast.renderer>PotplayerRenderer</macast.title>
+# <macast.platform>win32</macast.title>
+# <macast.version>0.1</macast.version>
 # <macast.author>xfangfang</macast.author>
 # <macast.desc>PotPlayer support for Macast</macast.desc>
-# <macast.version>0.1</macast.version>
-# <macast.platform>win32</macast.title>
+
 
 import os
 import time

@@ -8,10 +8,10 @@ Plugin repository for [Macast](https://github.com/xfangfang/Macast/).
 
 ## How to use third-party player plugin
 
-  1. Download the [Macast](https://github.com/xfangfang/Macast/) from GitHub actions.
+  1. Download [Macast](https://github.com/xfangfang/Macast/) from GitHub Release.
   2. Download the plugin you want from this repo.
   3. Open Macast, and click `Open Config Directory` in the setting menu.
-  4. put **[some plugin].py** in renderer directory.
+  4. Put the **[some plugin].py** you just downloaded into the renderer folder of the Macast configuration directory
   5. Restart Macast and choose the plugins you want.
 
 ## Write a new plugin

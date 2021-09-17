@@ -14,6 +14,18 @@ Plugin repository for [Macast](https://github.com/xfangfang/Macast/).
   4. Put the **[some plugin].py** you just downloaded into the renderer folder of the Macast configuration directory
   5. Restart Macast and choose the plugins you want.
 
+## Plugins
+
+*You can click [some plugin].py on the right side of the table, and then save the displayed text to the renderer folder with the corresponding file name.*
+
+| Plugins    | MacOS | Linux                    | Windows | Description                                                  | Links                                                        |
+| ---------- | ----- | ------------------------ | ------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| IINA       | ☑️     |                          |         | IINA support for Macast                                      | [iina.py](https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/iina/iina.py)  [README](https://github.com/xfangfang/Macast-plugins/tree/main/iina) |
+| PotPlayer  |       |                          | ☑️       | PotPlayer support for Macast                                 | [potplayer.py](https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/potplayer/potplayer.py)  [README](https://github.com/xfangfang/Macast-plugins/tree/main/potplayer) |
+| PI-FM-RDS  |       | ☑️ (Only for RaspberryPi) |         | Use this to send MP3 music in the form of FM broadcast       | [pi_fm.py](https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/pi-fm-rds/pi_fm.py)  [README](https://github.com/xfangfang/Macast-plugins/tree/main/pi-fm-rds) |
+| WebBrowser | ☑️     | ☑️                        | ☑️       | This can be used to download media files or get some m3u8 played | [web.py](https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/web/web.py)  [README](https://github.com/xfangfang/Macast-plugins/tree/main/web) |
+
+
 ## Write a new plugin
 
-  if you can't find any plugins you like, check [here](https://github.com/xfangfang/Macast/wiki/Custom-Renderer) to learn how to write a custom renderer plugin, and feel welcome to open a pull requests.
+if you can't find any plugins you like, check [here](https://github.com/xfangfang/Macast/wiki/Custom-Renderer) to learn how to write a custom renderer plugin, and feel welcome to open a pull requests.

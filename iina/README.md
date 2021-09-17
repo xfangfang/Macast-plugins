@@ -1,5 +1,10 @@
 # IINA support for Macast
 
-platform: darwin
+platform: macos
 
 A simple plugin that only supports play and stop.
+
+# Update logs
+
+v0.2: show `Copy Video URI` options  
+v0.1: support start and stop

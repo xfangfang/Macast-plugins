@@ -1,14 +1,14 @@
 # Copyright (c) 2021 by xfangfang. All Rights Reserved.
 #
-# Using IINA as DLNA media renderer
+# Macast Dummy media renderer
 #
 # Macast Metadata
-# <macast.title>IINA Renderer</macast.title>
-# <macast.renderer>IINARenderer</macast.renderer>
-# <macast.platform>darwin</macast.platform>
-# <macast.version>0.2</macast.version>
+# <macast.title>Dummy Renderer</macast.title>
+# <macast.renderer>DummyRenderer</macast.renderer>
+# <macast.platform>darwin,linux,win32</macast.platform>
+# <macast.version>0.1</macast.version>
 # <macast.author>xfangfang</macast.author>
-# <macast.desc>IINA support for Macast</macast.desc>
+# <macast.desc>Macast Dummy media renderer</macast.desc>
 
 
 import os
@@ -19,18 +19,15 @@ import subprocess
 from macast import cli
 from macast.renderer import Renderer
 
-IINA_PATH = '/Applications/IINA.app/Contents/MacOS/iina-cli'
 
-
-class IINARenderer(Renderer):
+class DummyRenderer(Renderer):
 
     def __init__(self):
-        super(IINARenderer, self).__init__()
+        super(DummyRenderer, self).__init__()
         self.start_position = 0
         self.position_thread_running = True
         self.position_thread = threading.Thread(target=self.position_tick, daemon=True)
         self.position_thread.start()
-        self.iina = None
 
     def position_tick(self):
         while self.position_thread_running:
@@ -41,31 +38,26 @@ class IINARenderer(Renderer):
             self.set_state_position(position)
 
     def set_media_stop(self):
-        try:
-            if self.iina is not None:
-                self.iina.terminate()
-            os.waitpid(-1, 1)
-        except Exception as e:
-            print(str(e))
         self.set_state_transport('STOPPED')
         cherrypy.engine.publish('renderer_av_stop')
 
     def set_media_url(self, url):
         self.set_media_stop()
         self.start_position = 0
-        self.iina = subprocess.Popen([IINA_PATH, '--keep-running', '--no-stdin', url])
+        print(url)
         self.set_state_transport("PLAYING")
         cherrypy.engine.publish('renderer_av_uri', url)
 
     def stop(self):
-        super(IINARenderer, self).stop()
+        super(DummyRenderer, self).stop()
         self.set_media_stop()
-        print("IINA stop")
+        print("Dummy stop")
+        cherrypy.engine.publish('renderer_av_stop')
 
     def start(self):
-        super(IINARenderer, self).start()
-        print("IINA start")
+        super(DummyRenderer, self).start()
+        print("Dummy start")
 
 
 if __name__ == '__main__':
-    cli(IINARenderer())
+    cli(DummyRenderer())

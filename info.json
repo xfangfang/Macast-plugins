@@ -1,0 +1,37 @@
+{
+    "plugin": {
+        "iina/iina.py": {
+            "author": "xfangfang",
+            "desc": "IINA support for Macast",
+            "platform": "darwin",
+            "renderer": "IINARenderer",
+            "title": "IINA Renderer",
+            "version": "0.2"
+        },
+        "pi-fm-rds/pi_fm.py": {
+            "author": "xfangfang",
+            "desc": "PIFMRDS support for Macast",
+            "platform": "linux",
+            "renderer": "PIFMRenderer",
+            "title": "PIFMRDS Renderer",
+            "version": "0.1"
+        },
+        "potplayer/potplayer.py": {
+            "author": "xfangfang",
+            "desc": "PotPlayer support for Macast",
+            "platform": "win32",
+            "renderer": "PotplayerRenderer",
+            "title": "PotPlayer",
+            "version": "0.2"
+        },
+        "web/web.py": {
+            "author": "xfangfang",
+            "desc": "Using web browser as DLNA media renderer",
+            "platform": "darwin,linux,win32",
+            "renderer": "WebRenderer",
+            "title": "Web Renderer",
+            "version": "0.1"
+        }
+    },
+    "repo_base_path": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/"
+}

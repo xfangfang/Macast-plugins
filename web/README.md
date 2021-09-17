@@ -1,4 +1,4 @@
-# PotPlayer support for Macast
+# Web Browser support for Macast
 
 platform: macos, linux, windows
 

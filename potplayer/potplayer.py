@@ -6,7 +6,7 @@
 # <macast.title>PotPlayer</macast.title>
 # <macast.renderer>PotplayerRenderer</macast.title>
 # <macast.platform>win32</macast.title>
-# <macast.version>0.2</macast.version>
+# <macast.version>0.3</macast.version>
 # <macast.author>xfangfang</macast.author>
 # <macast.desc>PotPlayer support for Macast</macast.desc>
 
@@ -45,10 +45,18 @@ class PotplayerRenderer(Renderer):
         self.set_state_transport('STOPPED')
         cherrypy.engine.publish('renderer_av_stop')
 
+    def start_player(self, url):
+        try:
+            subprocess.call('{} "{}"'.format(POTPLAYER_PATH, url))
+        except Exception as e:
+            print(e)
+            self.set_media_stop()
+            cherrypy.engine.publish('app_notify', "Error", str(e))
+        
     def set_media_url(self, url):
         self.set_media_stop()
         self.start_position = 0
-        subprocess.Popen('{} "{}"'.format(POTPLAYER_PATH, url), shell=True)
+        threading.Thread(target=self.start_player, daemon=True, kwargs={'url': url}).start() 
         self.set_state_transport("PLAYING")
         cherrypy.engine.publish('renderer_av_uri', url)
 

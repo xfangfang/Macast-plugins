@@ -8,8 +8,9 @@
 # <macast.renderer>PIFMRenderer</macast.renderer>
 # <macast.platform>linux</macast.platform>
 # <macast.version>0.1</macast.version>
+# <macast.host_version>0.65</macast.host_version>
 # <macast.author>xfangfang</macast.author>
-# <macast.desc>PIFMRDS support for Macast</macast.desc>
+# <macast.desc>PIFMRDS support for Macast. Only for raspberry pi, visit the plugin repository for more information.</macast.desc>
 
 import os
 import time

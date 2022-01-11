@@ -6,7 +6,7 @@ import re
 import json
 
 REPO_BASE_PATH = 'https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/'
-
+REPO_URL = "https://github.com/xfangfang/Macast-plugins"
 
 def read_metadata(path):
     data = {}
@@ -18,7 +18,12 @@ def read_metadata(path):
         for key, value in metadata:
             print('%-10s: %s' % (key, value))
             data[key] = value
-    return base_name, data
+        data['url'] = REPO_BASE_PATH + base_name
+        if 'renderer' in data:
+            data['type'] = 'renderer'
+        if 'protocol' in data:
+            data['type'] = 'protocol'
+    return data
 
 
 def main():
@@ -34,11 +39,11 @@ def main():
 
     # update info
     info = dict()
-    info['repo_base_path'] = REPO_BASE_PATH
-    info['plugin'] = {}
+    info['plugin_v1'] = []
+    info['repo_url'] = REPO_URL
     for path in plugins_path:
-        name, data = read_metadata(path)
-        info['plugin'][name] = data
+        data = read_metadata(path)
+        info['plugin_v1'].append(data)
 
     print(info)
 

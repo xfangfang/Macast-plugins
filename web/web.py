@@ -8,8 +8,9 @@
 # <macast.renderer>WebRenderer</macast.renderer>
 # <macast.platform>darwin,linux,win32</macast.platform>
 # <macast.version>0.1</macast.version>
+# <macast.host_version>0.65</macast.host_version>
 # <macast.author>xfangfang</macast.author>
-# <macast.desc>Using web browser as DLNA media renderer</macast.desc>
+# <macast.desc>Using web browser as DLNA media renderer, This plugin can be used to download media files or get some m3u8 played.</macast.desc>
 
 
 import os

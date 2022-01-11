@@ -3,12 +3,13 @@
 # Using potplayer as DLNA media renderer
 #
 # Macast Metadata
-# <macast.title>PotPlayer</macast.title>
+# <macast.title>PotPlayer Renderer</macast.title>
 # <macast.renderer>PotplayerRenderer</macast.title>
 # <macast.platform>win32</macast.title>
 # <macast.version>0.3</macast.version>
+# <macast.host_version>0.65</macast.host_version>
 # <macast.author>xfangfang</macast.author>
-# <macast.desc>PotPlayer support for Macast</macast.desc>
+# <macast.desc>PotPlayer support for Macast, this is a simple plugin that only supports play and stop.</macast.desc>
 
 
 import os

@@ -6,8 +6,8 @@
 # <macast.title>PotPlayer Renderer</macast.title>
 # <macast.renderer>PotplayerRenderer</macast.title>
 # <macast.platform>win32</macast.title>
-# <macast.version>0.3</macast.version>
-# <macast.host_version>0.65</macast.host_version>
+# <macast.version>0.4</macast.version>
+# <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
 # <macast.desc>PotPlayer support for Macast, this is a simple plugin that only supports play and stop.</macast.desc>
 
@@ -20,7 +20,7 @@ import subprocess
 from macast import cli, gui
 from macast.renderer import Renderer
 
-POTPLAYER_PATH = '"C:\\Program Files\\PotPlayer64\\PotPlayermini64.exe"'
+POTPLAYER_PATH = r'"C:\Program Files\PotPlayer64\PotPlayermini64.exe"'
 
 
 class PotplayerRenderer(Renderer):
@@ -53,11 +53,11 @@ class PotplayerRenderer(Renderer):
             print(e)
             self.set_media_stop()
             cherrypy.engine.publish('app_notify', "Error", str(e))
-        
-    def set_media_url(self, url):
+
+    def set_media_url(self, url, start=0):
         self.set_media_stop()
         self.start_position = 0
-        threading.Thread(target=self.start_player, daemon=True, kwargs={'url': url}).start() 
+        threading.Thread(target=self.start_player, daemon=True, kwargs={'url': url}).start()
         self.set_state_transport("PLAYING")
         cherrypy.engine.publish('renderer_av_uri', url)
 

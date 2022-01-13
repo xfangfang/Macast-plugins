@@ -7,7 +7,7 @@
 # <macast.renderer>IINARenderer</macast.renderer>
 # <macast.platform>darwin</macast.platform>
 # <macast.version>0.3</macast.version>
-# <macast.host_version>0.65</macast.host_version>
+# <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
 # <macast.desc>IINA support for Macast. Because iina is developed based on MPV, this plugin experience is similar to the built-in MPV renderer.</macast.desc>
 
@@ -82,16 +82,16 @@ class IINARenderer(MPVRenderer):
             self.ipc_thread = None
         cherrypy.engine.publish('renderer_av_stop')
 
-    def set_media_url(self, data):
+    def set_media_url(self, data, start=0):
         """ data : string
         """
         if not self.is_iina_start:
             self.set_media_stop()
-            self.start_iina(data)
+            self.start_iina(data, start=0)
             self.ipc_thread = threading.Thread(target=self.start_ipc, name="IINA_IPC_THREAD")
             self.ipc_thread.start()
         else:
-            self.send_command(['loadfile', data, 'replace'])
+            self.send_command(['loadfile', data, 'replace', f'start={start}'])
         cherrypy.engine.publish('renderer_av_uri', data)
 
     def send_command(self, command):
@@ -105,7 +105,7 @@ class IINARenderer(MPVRenderer):
         super(IINARenderer, self).set_observe()
         self.set_media_volume(100)
 
-    def start_iina(self, url):
+    def start_iina(self, url, start=0):
         """Start iina thread
         """
         self.is_iina_start = True
@@ -113,6 +113,7 @@ class IINARenderer(MPVRenderer):
             self.path,
             '--keep-running',
             '--mpv-input-ipc-server={}'.format(self.mpv_sock),
+            f'--mpv-start={start}',
             url
         ]
         # start iina

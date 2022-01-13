@@ -6,7 +6,7 @@
 # <macast.title>NVA Protocol</macast.title>
 # <macast.protocol>NVAProtocol</macast.protocol>
 # <macast.platform>darwin,win32,linux</macast.platform>
-# <macast.version>0.1</macast.version>
+# <macast.version>0.2</macast.version>
 # <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
 # <macast.desc>NVA protocol support for Macast.</macast.desc>
@@ -369,9 +369,9 @@ class NVAHTTPRequest(cheroot.server.HTTPRequest):
             # invalid URIs without raising errors
             # https://tools.ietf.org/html/rfc7230#section-5.3.3
             invalid_path = (
-                    _authority != uri
-                    or not _port
-                    or any((_scheme, _path, _qs, _fragment))
+                _authority != uri
+                or not _port
+                or any((_scheme, _path, _qs, _fragment))
             )
             if invalid_path:
                 self.simple_response(
@@ -385,9 +385,9 @@ class NVAHTTPRequest(cheroot.server.HTTPRequest):
             scheme = qs = fragment = EMPTY
         else:
             disallowed_absolute = (
-                    self.strict_mode
-                    and not self.proxy_mode
-                    and uri_is_absolute_form
+                self.strict_mode
+                and not self.proxy_mode
+                and uri_is_absolute_form
             )
             if disallowed_absolute:
                 # https://tools.ietf.org/html/rfc7230#section-5.3.2
@@ -400,9 +400,9 @@ class NVAHTTPRequest(cheroot.server.HTTPRequest):
                 return False
 
             invalid_path = (
-                    self.strict_mode
-                    and not uri.startswith(FORWARD_SLASH)
-                    and not uri_is_absolute_form
+                self.strict_mode
+                and not uri.startswith(FORWARD_SLASH)
+                and not uri_is_absolute_form
             )
             if invalid_path:
                 # https://tools.ietf.org/html/rfc7230#section-5.3.1
@@ -511,8 +511,8 @@ class NVAHTTPRequest(cheroot.server.HTTPRequest):
                 pass
             else:
                 needs_chunked = (
-                        self.response_protocol == 'HTTP/1.1'
-                        and self.method != b'HEAD'
+                    self.response_protocol == 'HTTP/1.1'
+                    and self.method != b'HEAD'
                 )
                 if needs_chunked:
                     # Use the chunked transfer-coding
@@ -542,8 +542,8 @@ class NVAHTTPRequest(cheroot.server.HTTPRequest):
             self.outheaders.append((
                 b'Keep-Alive',
                 u'timeout={connection_timeout}'.
-                    format(connection_timeout=self.server.timeout).
-                    encode('ISO-8859-1'),
+                format(connection_timeout=self.server.timeout).
+                encode('ISO-8859-1'),
             ))
 
         if (not self.close_connection) and (not self.chunked_read):
@@ -1189,7 +1189,7 @@ class NVAConectionHandler(NVAConectionBaseHandler):
             self.season_id = int(params['seasonId'])
             self.playurl_type = 1
             self.danmaku_switch_save = params.get('danmakuSwitchSave', True)
-            self.desire_speed = float(params['userDesireSpeed'])
+            self.desire_speed = float(params.get('userDesireSpeed', 1))
             self.title = ''
             if int(params['epId']) != 0:
                 # 番剧
@@ -1232,7 +1232,7 @@ class NVAConectionHandler(NVAConectionBaseHandler):
             self.content_type = params['contentType']
             self.playurl_type = 1
             self.season_id = int(params['seasonId'])
-            self.desire_speed = float(params['userDesireSpeed'])
+            self.desire_speed = float(params.get('userDesireSpeed', 1))
             # todo danmuku switch save
             self.danmaku_switch_save = params.get('danmakuSwitchSave', True)
             if int(params['epId']) != 0:

@@ -3,7 +3,7 @@
         {
             "author": "xfangfang",
             "desc": "IINA support for Macast. Because iina is developed based on MPV, this plugin experience is similar to the built-in MPV renderer.",
-            "host_version": "0.65",
+            "host_version": "0.7",
             "platform": "darwin",
             "renderer": "IINARenderer",
             "title": "IINA Renderer",
@@ -14,35 +14,35 @@
         {
             "author": "xfangfang",
             "desc": "PIFMRDS support for Macast. Only for raspberry pi, visit the plugin repository for more information.",
-            "host_version": "0.65",
+            "host_version": "0.7",
             "platform": "linux",
             "renderer": "PIFMRenderer",
             "title": "PIFMRDS Renderer",
             "type": "renderer",
             "url": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/pi-fm-rds/pi_fm.py",
-            "version": "0.1"
+            "version": "0.2"
         },
         {
             "author": "xfangfang",
             "desc": "Using web browser as DLNA media renderer, This plugin can be used to download media files or get some m3u8 played.",
-            "host_version": "0.65",
+            "host_version": "0.7",
             "platform": "darwin,linux,win32",
             "renderer": "WebRenderer",
             "title": "Web Renderer",
             "type": "renderer",
             "url": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/web/web.py",
-            "version": "0.1"
+            "version": "0.2"
         },
         {
             "author": "xfangfang",
             "desc": "PotPlayer support for Macast, this is a simple plugin that only supports play and stop.",
-            "host_version": "0.65",
+            "host_version": "0.7",
             "platform": "win32",
             "renderer": "PotplayerRenderer",
             "title": "PotPlayer Renderer",
             "type": "renderer",
             "url": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/potplayer/potplayer.py",
-            "version": "0.3"
+            "version": "0.4"
         },
         {
             "author": "xfangfang",
@@ -53,7 +53,7 @@
             "title": "NVA Protocol",
             "type": "protocol",
             "url": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/nirvana/nirvana.py",
-            "version": "0.1"
+            "version": "0.2"
         }
     ],
     "repo_url": "https://github.com/xfangfang/Macast-plugins"

@@ -7,8 +7,8 @@
 # <macast.title>PIFMRDS Renderer</macast.title>
 # <macast.renderer>PIFMRenderer</macast.renderer>
 # <macast.platform>linux</macast.platform>
-# <macast.version>0.1</macast.version>
-# <macast.host_version>0.65</macast.host_version>
+# <macast.version>0.2</macast.version>
+# <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
 # <macast.desc>PIFMRDS support for Macast. Only for raspberry pi, visit the plugin repository for more information.</macast.desc>
 
@@ -46,7 +46,7 @@ class PIFMRenderer(Renderer):
         os.waitpid(-1, 1)
         self.set_state_transport('STOPPED')
 
-    def set_media_url(self, data):
+    def set_media_url(self, data, start=0):
         self.start_position = 0
         self.sox = subprocess.Popen(['sox', '-t', 'mp3', data, '-t', 'wav', '-'],
                                     stdout=self.fm.stdin)

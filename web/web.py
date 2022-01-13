@@ -7,8 +7,8 @@
 # <macast.title>Web Renderer</macast.title>
 # <macast.renderer>WebRenderer</macast.renderer>
 # <macast.platform>darwin,linux,win32</macast.platform>
-# <macast.version>0.1</macast.version>
-# <macast.host_version>0.65</macast.host_version>
+# <macast.version>0.2</macast.version>
+# <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
 # <macast.desc>Using web browser as DLNA media renderer, This plugin can be used to download media files or get some m3u8 played.</macast.desc>
 
@@ -48,7 +48,7 @@ class WebRenderer(Renderer):
         self.set_state_transport('STOPPED')
         cherrypy.engine.publish('renderer_av_stop')
 
-    def set_media_url(self, url):
+    def set_media_url(self, url, start=0):
         self.set_media_stop()
         self.start_position = 0
         self.open_browser(url)

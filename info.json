@@ -46,14 +46,14 @@
         },
         {
             "author": "xfangfang",
-            "desc": "NVA protocol support for Macast.",
+            "desc": "NVA protocol support for Macast. Kndow as \"哔哩必连\"",
             "host_version": "0.7",
             "platform": "darwin,win32,linux",
             "protocol": "NVAProtocol",
             "title": "NVA Protocol",
             "type": "protocol",
             "url": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/nirvana/nirvana.py",
-            "version": "0.2"
+            "version": "0.3"
         }
     ],
     "repo_url": "https://github.com/xfangfang/Macast-plugins"

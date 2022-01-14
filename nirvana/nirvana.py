@@ -6,10 +6,10 @@
 # <macast.title>NVA Protocol</macast.title>
 # <macast.protocol>NVAProtocol</macast.protocol>
 # <macast.platform>darwin,win32,linux</macast.platform>
-# <macast.version>0.2</macast.version>
+# <macast.version>0.3</macast.version>
 # <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
-# <macast.desc>NVA protocol support for Macast.</macast.desc>
+# <macast.desc>NVA protocol support for Macast. Kndow as "哔哩必连"</macast.desc>
 
 
 import re
@@ -1179,27 +1179,26 @@ class NVAConectionHandler(NVAConectionBaseHandler):
         elif method == 'Play':
             self.send_res(counter)
             self.aid = params['aid']
-            self.oid = params['oid']
+            self.oid = params.get('oid', self.aid)
             self.cid = params['cid']
-            self.epid = int(params['epId'])
-            self.access_key = params['accessKey']
-            self.current_qn = params['userDesireQn']
-            self.desire_qn = params['userDesireQn']
-            self.content_type = params['contentType']
-            self.season_id = int(params['seasonId'])
+            self.epid = int(params.get('epId', 0))
+            self.access_key = params.get('accessKey', '')
+            self.current_qn = params.get('userDesireQn', 0)
+            self.desire_qn = params.get('userDesireQn', 0)
+            self.content_type = params.get('contentType', 1)
+            self.season_id = int(params.get('seasonId', 0))
             self.playurl_type = 1
             self.danmaku_switch_save = params.get('danmakuSwitchSave', True)
             self.desire_speed = float(params.get('userDesireSpeed', 1))
             self.title = ''
-            if int(params['epId']) != 0:
+            if int(self.epid) != 0:
                 # 番剧
-                self.oid = params['epId']
+                self.oid = self.epid
                 self.playurl_type = 2
 
             url, qn = self.get_video_url()
             print(f'url: {url}\nqn: {qn}')
-            start = params['seekTs']
-            self.send_play_cmd(url, start)
+            self.send_play_cmd(url, params.get('seekTs', 0))
         elif method == 'PlayUrl':
             # todo 开始时seek
             self.send_res(counter)
@@ -1223,24 +1222,24 @@ class NVAConectionHandler(NVAConectionBaseHandler):
             print(params)
             # todo
             self.aid = params['aid']
-            self.oid = params['oid']
+            self.oid = params.get('oid', self.aid)
             self.cid = params['cid']
-            self.epid = int(params['epId'])
-            self.access_key = params['accessKey']
-            self.current_qn = params['quality']
-            self.desire_qn = params['userDesireQn']
-            self.content_type = params['contentType']
+            self.epid = int(params.get('epId', 0))
+            self.access_key = params.get('accessKey', '')
+            self.current_qn = params.get('userDesireQn', 0)
+            self.desire_qn = params.get('userDesireQn', 0)
+            self.content_type = params.get('contentType', 1)
             self.playurl_type = 1
-            self.season_id = int(params['seasonId'])
+            self.season_id = int(params.get('seasonId', 0))
             self.desire_speed = float(params.get('userDesireSpeed', 1))
             # todo danmuku switch save
             self.danmaku_switch_save = params.get('danmakuSwitchSave', True)
-            if int(params['epId']) != 0:
+            if self.epid != 0:
                 # 番剧
-                self.oid = params['epId']
+                self.oid = self.epid
                 self.playurl_type = 2
 
-            self.send_play_cmd(url, start=params['seekTs'])
+            self.send_play_cmd(url, start=params.get('seekTs', 0))
         elif method == 'Seek':
             self.send_res(counter)
             position = params.get('seekTs', 0)  # second?

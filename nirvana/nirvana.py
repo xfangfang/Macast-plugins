@@ -9,7 +9,7 @@
 # <macast.version>0.3</macast.version>
 # <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
-# <macast.desc>NVA protocol support for Macast. Kndow as "哔哩必连"</macast.desc>
+# <macast.desc>NVA protocol support for Macast. Known as "哔哩必连"</macast.desc>
 
 
 import re

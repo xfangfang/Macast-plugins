@@ -8,6 +8,7 @@ import json
 REPO_BASE_PATH = 'https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/'
 REPO_URL = "https://github.com/xfangfang/Macast-plugins"
 
+
 def read_metadata(path):
     data = {}
     base_name = "/".join(path.split('/')[-2:])
@@ -49,8 +50,8 @@ def main():
 
     # write to file
     info_path = os.path.join(current_path, 'info.json')
-    with open(info_path, "w") as f:
-        json.dump(obj=info, fp=f, sort_keys=True, indent=4)
+    with open(info_path, "w", encoding='utf-8') as f:
+        json.dump(obj=info, fp=f, sort_keys=True, indent=4, ensure_ascii=False)
 
 
 if __name__ == '__main__':

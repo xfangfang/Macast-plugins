@@ -46,7 +46,7 @@
         },
         {
             "author": "xfangfang",
-            "desc": "NVA protocol support for Macast. Kndow as \"哔哩必连\"",
+            "desc": "NVA protocol support for Macast. Known as \"哔哩必连\"",
             "host_version": "0.7",
             "platform": "darwin,win32,linux",
             "protocol": "NVAProtocol",

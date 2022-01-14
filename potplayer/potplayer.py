@@ -20,7 +20,7 @@ import subprocess
 from macast import cli, gui
 from macast.renderer import Renderer
 
-POTPLAYER_PATH = r'"C:\Program Files\PotPlayer64\PotPlayermini64.exe"'
+POTPLAYER_PATH = r'"C:\Program Files\DAUM\PotPlayer\PotPlayermini64.exe"'
 
 
 class PotplayerRenderer(Renderer):

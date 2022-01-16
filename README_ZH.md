@@ -11,7 +11,7 @@
   1. 从Gitee下载 [Macast](https://gitee.com/xfangfang/Macast/)
   2. 从这个仓库下载你需要的插件（看下一节如何下载）
   3. 打开Macast, 点击设置选项中的 `打开配置目录`
-  4. 把您刚刚下载的 **[some plugin].py** 文件放入配置目录中的renderer文件夹下
+  4. 把您刚刚下载的 **[some plugin].py** 文件放入配置目录中对应的文件夹下
   5. 重启Macast，然后在菜单中选择你需要的插件.
 
 ## 如何下载插件

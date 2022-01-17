@@ -2,14 +2,14 @@
     "plugin_v1": [
         {
             "author": "xfangfang",
-            "desc": "IINA support for Macast. Because iina is developed based on MPV, this plugin experience is similar to the built-in MPV renderer.",
+            "desc": "IINA support for Macast. Because iina is developed based on MPV, this plugin's experience is similar to the built-in MPV renderer.",
             "host_version": "0.7",
             "platform": "darwin",
             "renderer": "IINARenderer",
             "title": "IINA Renderer",
             "type": "renderer",
             "url": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/iina/iina.py",
-            "version": "0.3"
+            "version": "0.31"
         },
         {
             "author": "xfangfang",

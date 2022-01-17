@@ -6,10 +6,10 @@
 # <macast.title>IINA Renderer</macast.title>
 # <macast.renderer>IINARenderer</macast.renderer>
 # <macast.platform>darwin</macast.platform>
-# <macast.version>0.3</macast.version>
+# <macast.version>0.31</macast.version>
 # <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
-# <macast.desc>IINA support for Macast. Because iina is developed based on MPV, this plugin experience is similar to the built-in MPV renderer.</macast.desc>
+# <macast.desc>IINA support for Macast. Because iina is developed based on MPV, this plugin's experience is similar to the built-in MPV renderer.</macast.desc>
 
 
 import os
@@ -45,10 +45,11 @@ class IINARenderer(MPVRenderer):
         while self.running:
             print("check command")
             while not self.commond_queue.empty():
-                command = self.commond_queue.get()
+                if not self.running:
+                    return
                 if not self.is_iina_start:
-                    self.commond_queue.task_done()
-                    continue
+                    break
+                command = self.commond_queue.get()
                 error_time = 10
                 while error_time > 0:
                     error_time -= 1
@@ -57,6 +58,7 @@ class IINARenderer(MPVRenderer):
                     try:
                         self.ipc_sock.sendall(msg.encode())
                         self.commond_queue.task_done()
+                        time.sleep(0.05)
                         break
                     except Exception as e:
                         logger.error('error sendCommand: ' + str(e))
@@ -82,12 +84,24 @@ class IINARenderer(MPVRenderer):
             self.ipc_thread = None
         cherrypy.engine.publish('renderer_av_stop')
 
-    def set_media_url(self, data, start=0):
+    def set_media_url(self, data, start='0'):
         """ data : string
         """
+
+        def position_to_second(position: str) -> int:
+            pos = position.split(':')
+            if len(pos) < 3:
+                return 0
+            return int(pos[0]) * 3600 + int(pos[1]) * 60 + int(pos[2])
+
+        try:
+            start = int(start)
+        except:
+            start = position_to_second(start)
+
         if not self.is_iina_start:
             self.set_media_stop()
-            self.start_iina(data, start=0)
+            self.start_iina(data, start)
             self.ipc_thread = threading.Thread(target=self.start_ipc, name="IINA_IPC_THREAD")
             self.ipc_thread.start()
         else:
@@ -112,9 +126,9 @@ class IINARenderer(MPVRenderer):
         params = [
             self.path,
             '--keep-running',
-            '--mpv-input-ipc-server={}'.format(self.mpv_sock),
+            f'--mpv-input-ipc-server={self.mpv_sock}',
             f'--mpv-start={start}',
-            url
+            url,
         ]
         # start iina
         print("iina starting")

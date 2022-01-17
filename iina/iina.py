@@ -15,6 +15,7 @@
 import os
 import json
 import time
+import socket
 import threading
 import cherrypy
 import subprocess
@@ -139,6 +140,64 @@ class IINARenderer(MPVRenderer):
             stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
             env=Setting.get_system_env())
+
+    def start_ipc(self):
+        """Start ipc thread
+        Communicating with mpv
+        """
+        if self.ipc_running:
+            logger.error("mpv ipc is already runing")
+            return
+        self.ipc_running = True
+        error_time = 0
+        internal = 0.5
+        while self.ipc_running and self.running and self.mpv_thread.is_alive():
+            try:
+                time.sleep(internal)
+                logger.error("mpv ipc socket start connect")
+                self.ipc_sock = socket.socket(socket.AF_UNIX,
+                                              socket.SOCK_STREAM)
+                self.ipc_sock.connect(self.mpv_sock)
+                cherrypy.engine.publish('mpvipc_start')
+                cherrypy.engine.publish('renderer_start')
+                self.ipc_once_connected = True
+                internal = 0.5
+                self.set_observe()
+            except Exception as e:
+                error_time += 1
+                if error_time > 20:
+                    internal = 2
+                if self.iina is not None and self.iina.poll() is not None:
+                    self.is_iina_start = False
+                    self.ipc_running = False
+                    self.set_state_stop()
+                logger.error("mpv ipc socket reconnecting: {}".format(str(e)))
+                continue
+            res = b''
+            msgs = None
+            while self.ipc_running:
+                try:
+                    data = self.ipc_sock.recv(1048576)
+                    if data == b'':
+                        break
+                    res += data
+                    if data[-1] != 10:
+                        continue
+                except Exception as e:
+                    logger.debug(e)
+                    break
+                try:
+                    msgs = res.decode().strip().split('\n')
+                    for msg in msgs:
+                        self.update_state(msg)
+                except Exception as e:
+                    logger.error("decode error: {}".format(e))
+                    logger.error(f"decode error data: {msg}")
+                    logger.error(f"decode error data list: {msgs}")
+                finally:
+                    res = b''
+            self.ipc_sock.close()
+            logger.error("mpv ipc stopped")
 
     def start(self):
         super(MPVRenderer, self).start()

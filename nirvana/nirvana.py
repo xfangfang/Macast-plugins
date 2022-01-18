@@ -6,10 +6,10 @@
 # <macast.title>NVA Protocol</macast.title>
 # <macast.protocol>NVAProtocol</macast.protocol>
 # <macast.platform>darwin,win32,linux</macast.platform>
-# <macast.version>0.3</macast.version>
+# <macast.version>0.31</macast.version>
 # <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
-# <macast.desc>NVA protocol support for Macast. Known as "哔哩必连"</macast.desc>
+# <macast.desc>NVA protocol support for Macast. Known as "哔哩必连" v0.31: Fix proxy related problems.</macast.desc>
 
 
 import re
@@ -594,6 +594,30 @@ class NVAHTTPConnection(cheroot.server.HTTPConnection):
 class NVAHTTPServer(_cpnative_server.CPHTTPServer):
     ConnectionClass = NVAHTTPConnection
 
+# 负责下载的函数
+
+
+class NetworkManager:
+    proxies = None
+
+    @staticmethod
+    def GET(url):
+        try:
+            data = requests.get(url, proxies=NetworkManager.proxies)
+            return data
+        except OSError as e:
+            # fix proxy error with clash
+            logger.error(f'nva requests.get OSError:{e}')
+            if 'proxy' in str(e):
+                try:
+                    NetworkManager.proxies = {'http': None, "https": None}
+                    data = requests.get(url, proxies=NetworkManager.proxies)
+                    return data
+                except Exception as e:
+                    logger.error(f'nva requests.get Exception:{e}')
+
+        cherrypy.engine.publish('app_notify', 'ERROR', 'Network error')
+        raise Exception('Cannot get any data from network.')
 
 # DanmakuManager 负责处理弹幕下载和渲染
 # 通过cid下载xml实时弹幕，转换为ass，保存为本地文件
@@ -694,7 +718,7 @@ class DanmakuManager:
             return position_str + font
 
         try:
-            danmaku = etree.fromstring(requests.get(api).content)
+            danmaku = etree.fromstring(NetworkManager.GET(api).content)
             danmaku = danmaku.xpath("/i/d")
             ass = """[Script Info]
 Title: 弹幕
@@ -990,7 +1014,7 @@ class NVAConectionHandler(NVAConectionBaseHandler):
         play_list = []
         play_index = 0
         try:
-            json_text = requests.get(url).text
+            json_text = NetworkManager.GET(url).text
             json_obj = json.loads(json_text)
             if json_obj['code'] != 0:
                 logger.error(f"Error getting video info 1: {json_obj['message']}")
@@ -1044,7 +1068,7 @@ class NVAConectionHandler(NVAConectionBaseHandler):
         url = base_url + '&'.join(f'{i}={params[i]}' for i in params)
 
         try:
-            res = requests.get(url).text
+            res = NetworkManager.GET(url).text
             res = json.loads(res)
 
             print(res)

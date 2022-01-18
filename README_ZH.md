@@ -6,21 +6,33 @@
 
 <img align="center" width="400" src="https://xfangfang.gitee.io/assets/img/macast/select_renderer.png" alt="select_renderer" height="auto"/>
 
+推荐在Macast菜单中点击 `设置`->`高级设置` 并在随后打开的网页插件商店内下载插件，如果插件商店内一直显示 `Loading` 说明网络条件不好，这时可以跟随下面的操作步骤手动下载
+
 ## 如何使用第三方插件
 
-  1. 从Gitee下载 [Macast](https://gitee.com/xfangfang/Macast/)
-  2. 从这个仓库下载你需要的插件（看下一节如何下载）
+  1. 从官方仓库下载 [Macast](https://gitee.com/xfangfang/Macast/)
+  2. 从这个仓库下载你需要的插件（看下一节如何下载，和保存在哪里）
   3. 打开Macast, 点击设置选项中的 `打开配置目录`
-  4. 把您刚刚下载的 **[some plugin].py** 文件放入配置目录中对应的文件夹下
+  4. 把您刚刚下载的 **[some plugin].py** 文件放入配置目录中对应的文件夹下(根据插件类型不同，文件夹名称为：`renderer` 或 `protocol` )
   5. 重启Macast，然后在菜单中选择你需要的插件.
 
 ## 如何下载插件
 
-**您可以点击下表右侧的 [some plugin].py 链接, 然后把浏览器显示的文字全部保存为[some plugin].py文件。**
+**您可以点击下表右侧的 [some plugin].py 链接, 然后把浏览器显示的文字全选保存为[some plugin].py文件。**
 
 **播放器类插件放入配置目录中的renderer文件夹下，协议类插件放入配置目录中的protocol文件夹下。**
 
 **使用之前不要忘记查看每个插件的README**
+
+一个正确的路径示例：
+Macast
+├── macast.log
+├── macast_setting.json
+├── protocol
+│   └── nirvana.py
+└── renderer
+    ├── iina.py
+    └── web.py
 
 | 插件    | MacOS | Linux                    | Windows | 描述                                                  | 链接                                                        |
 | ---------- | ----- | ------------------------ | ------- | ------------------------------------------------------------ | ------------------------------------------------------------ |

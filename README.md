@@ -8,17 +8,25 @@ Plugin repository for [Macast](https://github.com/xfangfang/Macast/).
 
 <img align="center" width="400" src="https://xfangfang.github.io/assets/img/macast/select_renderer.png" alt="select_renderer" height="auto"/>
 
-## How to use third-party player plugin
+**It is recommended to click the `advanced setting` of Macast and download the plugin in your web browser.**
+
+## How to install plugin manually
 
   1. Download [Macast](https://github.com/xfangfang/Macast/) from GitHub Release.
-  2. Download the plugin you want from this repo（See next section）.
+  2. Download the plugin you want from this repo（See next section for how to download and where to save）.
   3. Open Macast, and click `Open Config Directory` in the setting menu.
-  4. Put the **[some plugin].py** you just downloaded into the corresponding folder of the Macast configuration directory
-  5. Restart Macast and choose the plugins you want.
+  4. Put the **[some plugin].py** you just download into the corresponding folder(`renderer` or `protocol` depends on what kind of plugin) of the Macast configuration directory.
+  5. Restart Macast and choose the plugin you want.
 
 ## How to download Plugins
 
 *You can click [some plugin].py on the right side of the table, and then save the displayed text to the renderer or protocol folder with the corresponding file name.*
+
+**1. Put Player plugin(like: IINA PotPlayer WebBrowser) in the `renderer` folder.**
+
+**2. Put Protocol plugin(like: Nirvana) in the `protocol` folder.**
+
+**3. Never forget to read the `README`.**
 
 | Plugins    | MacOS | Linux                    | Windows | Description                                                  | Links                                                        |
 | ---------- | ----- | ------------------------ | ------- | ------------------------------------------------------------ | ------------------------------------------------------------ |

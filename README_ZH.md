@@ -24,16 +24,6 @@
 
 **使用之前不要忘记查看每个插件的README**
 
-一个正确的路径示例：
-Macast
-├── macast.log
-├── macast_setting.json
-├── protocol
-│   └── nirvana.py
-└── renderer
-    ├── iina.py
-    └── web.py
-
 | 插件    | MacOS | Linux                    | Windows | 描述                                                  | 链接                                                        |
 | ---------- | ----- | ------------------------ | ------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | IINA       | ☑️     |                          |         | IINA 适配插件                                     | [iina.py](https://gitee.com/xfangfang/Macast-plugins/raw/main/iina/iina.py)  [README](https://gitee.com/xfangfang/Macast-plugins/tree/main/iina) |

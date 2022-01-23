@@ -15,20 +15,19 @@ import logging
 import requests
 from macast import Setting, MenuItem, gui
 from macast_renderer.mpv import MPVRenderer, MPVRendererSetting
+from macast.utils import SETTING_DIR, RENDERER_DIR
 
 logger = logging.getLogger("LiveRenderer")
 logger.setLevel(logging.INFO)
 
 live_text = None
-LIVE_PATH = 'macast_live.m3u8'
+RENDERER_PATH = os.path.join(SETTING_DIR, RENDERER_DIR)
+LIVE_PATH = os.path.join(RENDERER_PATH, 'macast_live.m3u8')
+
 if not os.path.exists(LIVE_PATH):
-    try:
-        r = requests.get('http://notag.cn/live/macast_live.m3u8')
-        with open(LIVE_PATH, 'wb') as f:
-            f.write(r.content)
-    finally:
-        if f:
-            f.close()
+    r = requests.get('http://notag.cn/live/macast_live.m3u8')
+    with open(LIVE_PATH, 'wb') as f:
+        f.write(r.content)
 
 if os.path.exists(LIVE_PATH):
     try:
@@ -76,12 +75,23 @@ class LiveRendererSetting(MPVRendererSetting):
             return None
         return renderers.pop()
 
+    @property
+    def protocol(self):
+        protocols = cherrypy.engine.publish('get_protocol')
+        if len(protocols) > 0:
+            return protocols.pop()
+
     def on_start_click(self, item):
+        if self.lastItem and self.lastItem.data == item.data:
+            return
         logger.info(f'text: {item.text} data: {item.data}')
+        self.renderer.set_media_title(item.text)
         self.renderer.set_media_url(item.data)
-        item.checked = True
+        self.protocol.set_state_url(item.data)
+
         if self.lastItem:
             self.lastItem.checked = False
+        item.checked = True
         self.lastItem = item
 
 

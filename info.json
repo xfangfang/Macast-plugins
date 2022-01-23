@@ -54,6 +54,17 @@
             "type": "protocol",
             "url": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/nirvana/nirvana.py",
             "version": "0.31"
+        },
+        {
+            "author": "dushan555",
+            "desc": "Live support for Macast, It developed based on MPVRenderer, Can be used to watch live TV.",
+            "host_version": "0.7",
+            "platform": "win32,darwin,linux",
+            "renderer": "LiveRenderer",
+            "title": "Live Renderer",
+            "type": "renderer",
+            "url": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/live/live.py",
+            "version": "0.1"
         }
     ],
     "repo_url": "https://github.com/xfangfang/Macast-plugins"

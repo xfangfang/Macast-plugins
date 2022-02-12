@@ -12,16 +12,17 @@
 # <macast.desc>PotPlayer support for Macast, this is a simple plugin that only supports play and stop.</macast.desc>
 
 
-import os
-import time
-import cherrypy
-import threading
 import subprocess
-from macast import cli, gui
+import threading
+import time
+
+import cherrypy
+from macast import gui
 from macast.renderer import Renderer
 
 POTPLAYER_PATH = r'"C:\Program Files\DAUM\PotPlayer\PotPlayermini64.exe"'
 
+subtitle = None
 
 class PotplayerRenderer(Renderer):
     def __init__(self):
@@ -48,7 +49,10 @@ class PotplayerRenderer(Renderer):
 
     def start_player(self, url):
         try:
-            subprocess.call('{} "{}"'.format(POTPLAYER_PATH, url))
+            if subtitle is None:
+                subprocess.call('{} "{}"'.format(POTPLAYER_PATH, url))
+            else:
+                subprocess.call('{} "{}" /sub="{}"'.format(POTPLAYER_PATH, url, subtitle))
         except Exception as e:
             print(e)
             self.set_media_stop()
@@ -75,3 +79,13 @@ if __name__ == '__main__':
     gui(PotplayerRenderer())
     # or using cli to disable taskbar menu
     # cli(PotplayerRenderer())
+else:
+    import os
+
+    configurationDirectory = os.path.join(
+        os.getenv('LOCALAPPDATA'), r"xfangfang\Macast"
+    )
+    if os.path.exists(configurationDirectory):
+        subtitle = os.path.join(configurationDirectory, r"macast.ass")
+        if not os.path.exists(subtitle):
+            subtitle = None

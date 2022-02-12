@@ -19,6 +19,7 @@ import time
 import cherrypy
 from macast import gui
 from macast.renderer import Renderer
+from macast.utils import SETTING_DIR
 
 POTPLAYER_PATH = r'"C:\Program Files\DAUM\PotPlayer\PotPlayermini64.exe"'
 
@@ -82,10 +83,7 @@ if __name__ == '__main__':
 else:
     import os
 
-    configurationDirectory = os.path.join(
-        os.getenv('LOCALAPPDATA'), r"xfangfang\Macast"
-    )
-    if os.path.exists(configurationDirectory):
-        subtitle = os.path.join(configurationDirectory, r"macast.ass")
+    if os.path.exists(SETTING_DIR):
+        subtitle = os.path.join(SETTING_DIR, r"macast.ass")
         if not os.path.exists(subtitle):
             subtitle = None

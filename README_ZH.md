@@ -1,5 +1,5 @@
 # Macast-plugins
-[![visitor](https://visitor-badge.glitch.me/badge?page_id=xfangfang.Macast-plugins)](https://gitee.com/xfangfang/Macast-plugins)
+[![visitor](https://visitor-badge.deta.dev/badge?page_id=xfangfang.Macast-plugins)](https://gitee.com/xfangfang/Macast-plugins)
 [![plugins](https://shields-staging.herokuapp.com/github/directory-file-count/xfangfang/Macast-plugins?type=dir&label=plugins)](https://gitee.com/xfangfang/Macast-plugins/)
 
 [Macast](https://gitee.com/xfangfang/Macast/)的插件仓库.  

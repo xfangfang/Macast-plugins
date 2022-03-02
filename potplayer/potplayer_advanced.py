@@ -22,16 +22,19 @@ import subprocess
 import webbrowser
 import win32process,win32api,win32gui,win32con
 from enum import Enum
+from contextlib import contextmanager
 from macast import SETTING_DIR, Setting
-from macast.utils import notify_error
+from macast.utils import notify_error, win32_reg_open
 from macast.renderer import Renderer
 
 # We will read the potplayer location in the Windows registry first.
 # If it does not exist, potplayer location will be set to the value in the macast configuration file.
-# If both do not exist, it will be set to POTPLAYER_PATH(default path).
-# So when it can't find the potlayer automatically, 
-# please edit the configuration(Potplayer_Path) of Macast.
-POTPLAYER_PATH = r'C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe'
+# If both do not exist, it will be set to POTPLAYER_PATH_64 or POTPLAYER_PATH_32.
+# So when it can't find the potplayer automatically, please edit the `Potplayer_Path` in Macast configuration file or advanced setting. 
+# Generally, the program will automatically pop up the setting interface.
+# Therefore, there is no need to modify the following variables.
+POTPLAYER_PATH_64 = r'C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe'
+POTPLAYER_PATH_32 = r'C:\Program Files (x86)\DAUM\PotPlayer\PotPlayerMini.exe'
 
 # This shortcut key helps macast get the length of the video.
 # And it's automatically set in the potlayer.
@@ -111,14 +114,18 @@ def second_to_position(second):
 def get_potplayer_path():
     # read Windows registry
     try:
-        key = win32api.RegOpenKey(
-            win32con.HKEY_CURRENT_USER,
-            r'Software\DAUM\PotPlayer64',
-            0,
-            win32con.KEY_SET_VALUE|win32con.KEY_QUERY_VALUE)
-        path = win32api.RegQueryValueEx(key, 'ProgramPath')[0]
-        if os.path.exists(path):
-            return path
+        with win32_reg_open(r'Software\DAUM\PotPlayer64', win32con.KEY_SET_VALUE|win32con.KEY_QUERY_VALUE) as key:
+            path = win32api.RegQueryValueEx(key, 'ProgramPath')[0]
+            if os.path.exists(path):
+                return path
+    except:
+        pass
+
+    try:
+        with win32_reg_open(r'Software\DAUM\PotPlayer', win32con.KEY_SET_VALUE|win32con.KEY_QUERY_VALUE) as key:
+            path = win32api.RegQueryValueEx(key, 'ProgramPath')[0]
+            if os.path.exists(path):
+                return path
     except:
         pass
 
@@ -126,36 +133,35 @@ def get_potplayer_path():
     path = Setting.get(SettingProperty.Potplayer_Path, None)
 
     # using default location
-    if path is None:
-        path = POTPLAYER_PATH
-        Setting.set(SettingProperty.Potplayer_Path, path)
-    if os.path.exists(path):
-        return path
+    if path is None or not os.path.exists(path):
+        if os.path.exists(POTPLAYER_PATH_64):
+            return POTPLAYER_PATH_64
+        elif os.path.exists(POTPLAYER_PATH_32):
+            return POTPLAYER_PATH_32
 
     # cannot find potplayer
+    Setting.set(SettingProperty.Potplayer_Path, POTPLAYER_PATH_64)
     return None
 
-class PotplayerRegistry():
-
-    def __enter__(self):
-        logger.debug('enter registry')
-        self.key = None
-        try:
-            self.key = win32api.RegOpenKey(
-                win32con.HKEY_CURRENT_USER,
-                r'Software\DAUM\PotPlayerMini64\MainShortCutList',
-                0,
-                win32con.KEY_SET_VALUE|win32con.KEY_QUERY_VALUE)
-        except:
-            self.key = win32api.RegCreateKey(
-                win32con.HKEY_CURRENT_USER,
-                r'Software\DAUM\PotPlayerMini64\MainShortCutList')
-        return self.key
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        logger.debug('exit registry')
-        if self.key:
-            win32api.RegCloseKey(self.key)
+@contextmanager
+def get_potplayer_registry():
+    path = get_potplayer_path()
+    if path is None:
+        yield None
+        return
+    potplayer_base = os.path.basename(path).split(".")[0]
+    try:
+        key = win32api.RegOpenKey(
+            win32con.HKEY_CURRENT_USER,
+            rf'Software\DAUM\{potplayer_base}\MainShortCutList',
+            0,
+            win32con.KEY_SET_VALUE|win32con.KEY_QUERY_VALUE)
+    except:
+        key = win32api.RegCreateKey(
+            win32con.HKEY_CURRENT_USER,
+            rf'Software\DAUM\{potplayer_base}\MainShortCutList')
+    yield key
+    win32api.RegCloseKey(key)
 
 def set_potplayer_hotkey(potplayer_registry_key, func_key, main_key, func_code):
     func_key = func_key.lower()
@@ -225,10 +231,16 @@ class PotplayerRenderer(Renderer):
 
         # set potplayer hotkey for macast
         logger.debug(f'POTPLAYER_HOT_KEY: {POTPLAYER_HOT_KEY}')
-        with PotplayerRegistry() as registry:
-            for func, main, code in POTPLAYER_HOT_KEY:
-                logger.debug(f'Set hotkey: {func}+{main} -> {code}')
-                set_potplayer_hotkey(registry, func, main, code)
+        with get_potplayer_registry() as registry:
+            if registry is not None:
+                for func, main, code in POTPLAYER_HOT_KEY:
+                    logger.debug(f'Set hotkey: {func}+{main} -> {code}')
+                    set_potplayer_hotkey(registry, func, main, code)
+            else:
+                logger.error(f'cannot find potplayer at: {Setting.get(SettingProperty.Potplayer_Path, None)}')
+                logger.error(f'cannot find potplayer at: {POTPLAYER_PATH_64}')
+                logger.error(f'cannot find potplayer at: {POTPLAYER_PATH_32}')
+
 
     def position_tick(self):
         while self.position_thread_running:
@@ -262,10 +274,12 @@ class PotplayerRenderer(Renderer):
     def start_player(self, url, start):
         path = get_potplayer_path()
         if path is None:
-            subprocess.Popen(['notepad.exe', Setting.setting_path])
-            # webbrowser.open(f'http://localhost:{Setting.get_setting_port()}?page=2')
+            # subprocess.Popen(['notepad.exe', Setting.setting_path])
+            webbrowser.open(f'http://localhost:{Setting.get_setting_port()}?page=2')
             cherrypy.engine.publish('app_notify', "Error", "You should modify 'Potplayer_Path' to your local potplayer and restart Macast.")
-            logger.error(f"Cannot find potplayer in {POTPLAYER_PATH}")
+            logger.error(f'cannot find potplayer at: {Setting.get(SettingProperty.Potplayer_Path, None)}')
+            logger.error(f'cannot find potplayer at: {POTPLAYER_PATH_64}')
+            logger.error(f'cannot find potplayer at: {POTPLAYER_PATH_32}')
             return
 
         try:

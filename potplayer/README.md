@@ -8,7 +8,8 @@ A simple plugin that only supports play and stop.
 
 # Update logs
 
-v0.4: Add support for subtitles
+v0.5(beta, potplayer_advanced): Use with Macast(beta), Support subtitles, seek, pause\resume  
+v0.4: Add support for subtitles(Not perfect)  
 v0.3: Nofity error when cannot start potplayer  
 v0.2: show `Copy Video URI` options  
 v0.1: support start and stop

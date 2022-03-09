@@ -138,9 +138,12 @@ def get_potplayer_path():
             return POTPLAYER_PATH_64
         elif os.path.exists(POTPLAYER_PATH_32):
             return POTPLAYER_PATH_32
+    else:
+        return path
 
     # cannot find potplayer
-    Setting.set(SettingProperty.Potplayer_Path, POTPLAYER_PATH_64)
+    if path is None:
+        Setting.set(SettingProperty.Potplayer_Path, POTPLAYER_PATH_64)
     return None
 
 @contextmanager

@@ -69,16 +69,18 @@ def get_potplayer_path():
 
     # read macast configuration
     path = Setting.get(SettingProperty.Potplayer_Path, None)
-
     # using default location
     if path is None or not os.path.exists(path):
         if os.path.exists(POTPLAYER_PATH_64):
             return POTPLAYER_PATH_64
         elif os.path.exists(POTPLAYER_PATH_32):
             return POTPLAYER_PATH_32
+    else:
+        return path
 
     # cannot find potplayer
-    Setting.set(SettingProperty.Potplayer_Path, POTPLAYER_PATH_64)
+    if path is None:
+        Setting.set(SettingProperty.Potplayer_Path, POTPLAYER_PATH_64)
     return None
 
 class PotplayerRenderer(Renderer):

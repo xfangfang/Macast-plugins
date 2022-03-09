@@ -253,7 +253,7 @@ class PotplayerRenderer(Renderer):
             
     def set_media_stop(self):
         if self.pid is not None:
-            subprocess.Popen(['taskkill', '/f', '/pid', str(self.pid)]).communicate()
+            subprocess.Popen(['taskkill', '/f', '/pid', str(self.pid)], creationflags=subprocess.CREATE_NO_WINDOW).communicate()
         # remove subtitle
         try:
             os.remove(subtitle)
@@ -291,7 +291,7 @@ class PotplayerRenderer(Renderer):
             if title is None or title == '':
                 title = 'Macast'
             # start potplayer
-            proc = subprocess.Popen(f'"{path}" "{url}" /autoplay /title="{title}" /seek="{start}" /sub="{subtitle}"')
+            proc = subprocess.Popen(f'"{path}" "{url}" /autoplay /title="{title}" /seek="{start}" /sub="{subtitle}"', creationflags=subprocess.CREATE_NO_WINDOW)
             logger.info(f'Potplayer pid: {proc.pid}')
             self.pid = proc.pid
 

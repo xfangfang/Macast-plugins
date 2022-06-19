@@ -34,7 +34,7 @@ Plugin repository for [Macast](https://github.com/xfangfang/Macast/).
 | PotPlayer  |       |                          | ☑️       | PotPlayer support for Macast                                 | [potplayer.py](https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/potplayer/potplayer.py)  [README](https://github.com/xfangfang/Macast-plugins/tree/main/potplayer) |
 | PI-FM-RDS  |       | ☑️ (Only for RaspberryPi) |         | Use this to send MP3 music in the form of FM broadcast       | [pi_fm.py](https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/pi-fm-rds/pi_fm.py)  [README](https://github.com/xfangfang/Macast-plugins/tree/main/pi-fm-rds) |
 | WebBrowser | ☑️     | ☑️                        | ☑️       | This can be used to download media files or get some m3u8 played | [web.py](https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/web/web.py)  [README](https://github.com/xfangfang/Macast-plugins/tree/main/web) |
-| Nirvana（Protocol） | ☑️     | ☑️                        | ☑️       | A protocol created by Bilibili. | [nirvana.py](https://gitee.com/xfangfang/Macast-plugins/raw/main/nirvana/nirvana.py)  [README](https://gitee.com/xfangfang/Macast-plugins/tree/main/nirvana) |
+| Nirvana（Protocol） | ☑️     | ☑️                        | ☑️       | A protocol created by Bilibili. | [nirvana.py](https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/nirvana/nirvana.py)  [README](https://github.com/xfangfang/Macast-plugins/tree/main/nirvana) |
 
 
 ## Write a new plugin

@@ -6,7 +6,7 @@
 # <macast.title>NVA Protocol</macast.title>
 # <macast.protocol>NVAProtocol</macast.protocol>
 # <macast.platform>darwin,win32,linux</macast.platform>
-# <macast.version>0.31</macast.version>
+# <macast.version>0.32</macast.version>
 # <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
 # <macast.desc>NVA protocol support for Macast. Known as "哔哩必连" v0.31: Fix proxy related problems.</macast.desc>
@@ -602,8 +602,13 @@ class NetworkManager:
 
     @staticmethod
     def GET(url):
+        headers = {
+            "User-Agent": "Macast",
+            "Referer": "https://www.bilibili.com/client",
+            "Origin": "https://www.bilibili.com"
+        }
         try:
-            data = requests.get(url, proxies=NetworkManager.proxies)
+            data = requests.get(url, headers=headers, proxies=NetworkManager.proxies)
             return data
         except OSError as e:
             # fix proxy error with clash

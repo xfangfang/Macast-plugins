@@ -46,14 +46,14 @@
         },
         {
             "author": "xfangfang",
-            "desc": "NVA protocol support for Macast. Known as \"哔哩必连\" v0.31: Fix proxy related problems.",
+            "desc": "NVA protocol support for Macast. Known as \"哔哩必连\" v0.32: Fix request error.",
             "host_version": "0.7",
             "platform": "darwin,win32,linux",
             "protocol": "NVAProtocol",
             "title": "NVA Protocol",
             "type": "protocol",
             "url": "https://raw.githubusercontent.com/xfangfang/Macast-plugins/main/nirvana/nirvana.py",
-            "version": "0.31"
+            "version": "0.32"
         },
         {
             "author": "dushan555",

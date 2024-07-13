@@ -26,8 +26,8 @@ from macast import gui, Setting
 from macast.renderer import Renderer
 from macast.utils import SETTING_DIR
 
-POTPLAYER_PATH_64 = r'C:\Program Files\DAUM\PotPlayer\PotPlayerMini64.exe'
-POTPLAYER_PATH_32 = r'C:\Program Files (x86)\DAUM\PotPlayer\PotPlayerMini.exe'
+POTPLAYER_PATH_64 = r'C:\\Program Files\\DAUM\\PotPlayer\\PotPlayerMini64.exe'
+POTPLAYER_PATH_32 = r'C:\\Program Files (x86)\\DAUM\\PotPlayer\\PotPlayerMini.exe'
 
 logger = logging.getLogger("PotPlayer")
 subtitle = os.path.join(SETTING_DIR, r"macast.ass")
@@ -86,6 +86,7 @@ def get_potplayer_path():
 class PotplayerRenderer(Renderer):
     def __init__(self):
         super(PotplayerRenderer, self).__init__()
+        self.url = ''
         self.pid = None
         self.start_position = 0
         self.position_thread_running = True
@@ -113,7 +114,7 @@ class PotplayerRenderer(Renderer):
         self.set_state_transport('STOPPED')
         cherrypy.engine.publish('renderer_av_stop')
 
-    def start_player(self, url):
+    def start_player(self, url, title):
         path = get_potplayer_path()
         if path is None:
             subprocess.Popen(['notepad.exe', Setting.setting_path], creationflags=subprocess.CREATE_NO_WINDOW)
@@ -123,7 +124,7 @@ class PotplayerRenderer(Renderer):
             logger.error(f'cannot find potplayer at: {POTPLAYER_PATH_32}')
             return
         try:
-            proc = subprocess.Popen(f'"{path}" "{url}" /autoplay /sub="{subtitle}"', creationflags=subprocess.CREATE_NO_WINDOW)
+            proc = subprocess.Popen(f'"{path}" "{url}" /autoplay /title="{title}" /sub="{subtitle}"', creationflags=subprocess.CREATE_NO_WINDOW)
             self.pid = proc.pid
             # wait potplayer to stop
             proc.communicate()
@@ -135,11 +136,14 @@ class PotplayerRenderer(Renderer):
 
     def set_media_url(self, url, start=0):
         self.set_media_stop()
-        self.start_position = 0
-        threading.Thread(target=self.start_player, daemon=True, kwargs={'url': url}).start()
-        self.set_state_transport("PLAYING")
+        self.url = url
         cherrypy.engine.publish('renderer_av_uri', url)
 
+    def set_media_title(self, title):
+        self.start_position = 0
+        threading.Thread(target=self.start_player, daemon=True, kwargs={'url': self.url, 'title': title}).start()
+        self.set_state_transport("PLAYING")
+        
     def stop(self):
         super(PotplayerRenderer, self).stop()
         self.set_media_stop()

@@ -1,4 +1,4 @@
-# Copyright (c) 2021 by xfangfang. All Rights Reserved.
+# Copyright (c) 2021-2024 by xfangfang. All Rights Reserved.
 #
 # NVA protocol
 #
@@ -6,15 +6,19 @@
 # <macast.title>NVA Protocol</macast.title>
 # <macast.protocol>NVAProtocol</macast.protocol>
 # <macast.platform>darwin,win32,linux</macast.platform>
-# <macast.version>0.32</macast.version>
+# <macast.version>0.33</macast.version>
 # <macast.host_version>0.7</macast.host_version>
 # <macast.author>xfangfang</macast.author>
-# <macast.desc>NVA protocol support for Macast. Known as "哔哩必连" v0.31: Fix proxy related problems.</macast.desc>
+# <macast.desc>NVA protocol support for Macast. Known as "哔哩必连".</macast.desc>
 
+# changelog
+# v0.33: Fix video API error, Fix live stream error
+# v0.32: Fix video API error
 
 import re
 import os
 import urllib
+import hashlib
 import socket
 import cheroot.server
 import cherrypy
@@ -51,6 +55,10 @@ COMMAND = b'Command'
 SEND_CMD = b'\xe0'
 RET_CMD = b'\xc0'
 PING = b'\xe4'
+
+# https://github.com/SocialSisterYi/bilibili-API-collect/blob/master/docs/misc/sign/APPKey.md
+APP_KEY = '4ebafd7c4951b366'
+APP_SEC = '8cb98205e9b2ad3669aad0fce12a4c13'
 
 NVA_SERVICE = """<?xml version="1.0" encoding="UTF-8"?>
 <scpd xmlns="urn:schemas-upnp-org:service-1-0">
@@ -601,12 +609,27 @@ class NetworkManager:
     proxies = None
 
     @staticmethod
-    def GET(url):
+    def GET(url, sign=False):
         headers = {
             "User-Agent": "Macast",
             "Referer": "https://www.bilibili.com/client",
             "Origin": "https://www.bilibili.com"
         }
+        if sign:
+            url_path = url.split("?")[0]
+            data = url.split("?")[1].split("&")
+            params = {}
+            for i in data:
+                k, v = i.split("=")
+                params[k] = v
+            params.update({'appkey': APP_KEY, 'ts': int(time.time())})
+            params = dict(sorted(params.items()))
+            query = '&'.join([k + "=" + urllib.parse.quote(str(params[k]), safe='') for k in params])
+            sign = hashlib.md5((query+APP_SEC).encode()).hexdigest()
+            params.update({'sign':sign})
+            query = '&'.join([k + "=" + urllib.parse.quote(str(params[k]), safe='') for k in params])
+            url = f'{url_path}?{query}'
+
         try:
             data = requests.get(url, headers=headers, proxies=NetworkManager.proxies)
             return data
@@ -971,6 +994,7 @@ class NVAConectionHandler(NVAConectionBaseHandler):
         self.cid = ''
         self.epid = ''
         self.season_id = ''
+        self.roomId = ''
         self.access_key = ''
         self.current_qn = 0
         self.desire_qn = 0
@@ -1007,7 +1031,7 @@ class NVAConectionHandler(NVAConectionBaseHandler):
         params = {
             # 'access_key': self.access_key,
             'auto_play': 0,
-            'build': 104600,
+            'build': 106400,
             'card_type': 2 if self.epid != 0 else 1,
             'fourk': 0,
             'is_ad': 'false',
@@ -1055,29 +1079,25 @@ class NVAConectionHandler(NVAConectionBaseHandler):
 
         base_url = 'https://api.bilibili.com/x/tv/playurl?'
         params = {
-            'build': 104600,
-            'is_proj': 1,
-            'device_type': 1,
-            'mobi_app': 'android_tv_yst',
-            'platform': 'android',
-            'fnval': 0,  # 16 | 64 | 128 | 256 # todo 16为dash视频，尝试加载dash视频
-            'fnver': 0,
-            'fourk': 1,  # allowed 4k
-            'playurl_type': self.playurl_type,
-            'protocol': 1,
+            'access_key': self.access_key,
+            'actionKey': 'appkey',
+            'appkey': APP_KEY,
+            'build': 36700100,
             'cid': self.cid,
+            'fourk': 1,
+            'is_proj': 1,
+            'mobile_access_key': self.access_key,
+            'object_id': self.oid, # epid or aid
+            'ogv_aid': self.aid, # ep aid or empty
+            'platform': 'ios',
+            'playurl_type': self.playurl_type,
+            'protocol': 0,
             'qn': self.desire_qn,
-            'object_id': self.oid,
-            'mobile_access_key': self.access_key
         }
         url = base_url + '&'.join(f'{i}={params[i]}' for i in params)
-
         try:
-            res = NetworkManager.GET(url).text
+            res = NetworkManager.GET(url, sign=True).text
             res = json.loads(res)
-
-            print(res)
-
             if res['code'] != 0:
                 error_msg = res.get('message', '')
                 if error_msg != '':
@@ -1117,6 +1137,17 @@ class NVAConectionHandler(NVAConectionBaseHandler):
             if dash:
                 return dash['video'][0]['base_url'], self.qn
 
+            # todo 多个直播流切换
+            live = res['data']['live_mobile']
+            if live and live['stream']:
+                return live['stream'], self.qn
+
+            live = res['data']['live_stream']
+            if live and live['flv']:
+                for i in live['flv']:
+                    return i, self.qn
+
+
         except Exception as e:
             logger.error(f'error getting video urls {e}')
             cherrypy.engine.publish('app_notify', 'ERROR', f'error getting video urls {e}')
@@ -1133,13 +1164,19 @@ class NVAConectionHandler(NVAConectionBaseHandler):
         self.update_play_state()
 
         def get_extra_info():
+            # 直播暂不获取额外的信息
+            if self.playurl_type == 4:
+                self.renderer.set_media_title(f'直播间: {self.roomId}')
+                return
             logger.info("start get_extra_info")
             DanmakuManager.get_danmaku(self.cid, self.sub)
             self.renderer.set_media_sub_file({
                 'url': self.sub,
                 'title': '弹幕'
             })
-            self.get_video_info()
+            # 不获取课程的视频信息
+            if self.content_type and int(self.content_type) != 2:
+                self.get_video_info()
             logger.info("end get_extra_info")
 
         threading.Thread(target=get_extra_info).start()
@@ -1210,6 +1247,7 @@ class NVAConectionHandler(NVAConectionBaseHandler):
             self.aid = params['aid']
             self.oid = params.get('oid', self.aid)
             self.cid = params['cid']
+            self.roomId = params.get('roomId', 0)
             self.epid = int(params.get('epId', 0))
             self.access_key = params.get('accessKey', '')
             self.current_qn = params.get('userDesireQn', 0)
@@ -1224,6 +1262,9 @@ class NVAConectionHandler(NVAConectionBaseHandler):
                 # 番剧
                 self.oid = self.epid
                 self.playurl_type = 2
+            if int(self.roomId) != 0:
+                self.playurl_type = 4
+                self.oid = self.roomId
 
             url, qn = self.get_video_url()
             print(f'url: {url}\nqn: {qn}')
@@ -1363,7 +1404,7 @@ class NVAHandler(DLNAHandler):
             serial_num=1024,
             header_extra="""<X_brandName>Macast</X_brandName>
         <hostVersion>25</hostVersion>
-        <ottVersion>104600</ottVersion>
+        <ottVersion>106400</ottVersion>
         <channelName>master</channelName>
         <capability>254</capability>""",
             service_extra="""<service>

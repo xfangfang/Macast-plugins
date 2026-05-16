@@ -1,4 +1,3 @@
-# Copyright (c) 2024 by xfangfang. All Rights Reserved.
 #
 # Macast 录制插件 - 使用FFmpeg录制DLNA流媒体
 #
@@ -8,7 +7,7 @@
 # <macast.platform>darwin,linux,win32</macast.platform>
 # <macast.version>1.0</macast.version>
 # <macast.host_version>0.7</macast.host_version>
-# <macast.author>Macast User</macast.author>
+# <macast.author>The Flash</macast.author>
 # <macast.desc>基于FFmpeg的DLNA流媒体录制器。在播放的同时将媒体录制为MP4（H.264+AAC）格式。点击可配置保存路径并查看录制状态。</macast.desc>
 
 
